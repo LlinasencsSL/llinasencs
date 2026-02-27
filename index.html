@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llinasenca SL | Fabricación Propia</title>
+    <style>
+        :root {
+            --primary: #1e272e;
+            --accent: #d35400;
+            --whatsapp: #25d366;
+            --phone-blue: #2980b9;
+            --light: #f1f2f6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--white);
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background: rgba(30, 39, 46, 0.98);
+            color: white;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .logo-container { display: flex; flex-direction: column; }
+        .logo-main { display: flex; align-items: center; gap: 8px; }
+        
+        .badge-fabricacion {
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-header-presupuesto {
+            background: var(--accent);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        /* --- Hero --- */
+        .hero {
+            height: 70vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('assets/cabecera-web.avif');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 100px 20px 0;
+        }
+
+        .hero h1 { font-size: clamp(2rem, 6vw, 3.5rem); margin: 0; text-transform: uppercase; }
+        .hero p { font-size: 1.2rem; margin: 15px 0; font-weight: 300; }
+
+        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 25px; }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+            cursor: pointer;
+            min-width: 180px;
+            text-align: center;
+            border: none;
+        }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-phone { background: var(--phone-blue); color: white; }
+        .btn-whatsapp { background: var(--whatsapp); color: white; }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* --- Secciones --- */
+        .section-title { text-align: center; padding: 50px 20px 5px; font-size: 1.8rem; }
+        .section-title::after { content: ''; width: 50px; height: 3px; background: var(--accent); display: block; margin: 8px auto; }
+        
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 5% 40px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .gallery-item {
+            flex: 0 0 280px;
+            height: 350px;
+            scroll-snap-align: start;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
+        .gallery-item:hover img { transform: scale(1.05); }
+
+        /* --- LIGHTBOX (Versión Robusta) --- */
+        #lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        #lightbox-img {
+            max-width: 90%;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        #lightbox-caption { color: white; margin-top: 15px; font-size: 1.1rem; text-align: center; padding: 0 20px; }
+        #lightbox-counter { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 8px; }
+
+        .close-btn {
+            position: absolute;
+            top: 25px; right: 25px;
+            color: white; font-size: 45px;
+            cursor: pointer; line-height: 1;
+            z-index: 10001;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            color: white; font-size: 24px;
+            background: rgba(211, 84, 0, 0.7);
+            border: none; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 50%;
+            z-index: 10001;
+        }
+
+        .prev-arrow { left: 15px; }
+        .next-arrow { right: 15px; }
+
+        /* --- Modales de Contacto --- */
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 11000;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%; max-width: 450px;
+            position: relative;
+        }
+        .modal-content h2 { margin-top: 0; color: var(--primary); }
+        form input, form textarea {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        /* --- Footer --- */
+        footer { background: #111; color: white; padding: 40px 5%; text-align: center; }
+        .footer-info { margin-bottom: 20px; line-height: 1.6; }
+
+        @media (max-width: 600px) {
+            .nav-arrow { width: 40px; height: 40px; font-size: 18px; background: rgba(255, 255, 255, 0.15); }
+            header { padding: 10px 3%; }
+            .btn-header-presupuesto { font-size: 0.75rem; padding: 6px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-main">
+                <strong>LLINASENCA SL</strong>
+                <span class="badge-fabricacion">Fabricación Propia</span>
+            </div>
+        </div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">LLINARS DEL VALLÈS</div>
+    </header>
+
+    <section class="hero">
+        <h1>LLINASENCA SL</h1>
+        <p>Artesanos del hierro y especialistas en puertas.</p>
+        <div class="btn-container">
+            <div onclick="toggleModal()" class="btn btn-accent">Presupuesto sin compromiso</div>
+            <a href="tel:+34631333277" class="btn btn-phone">Llamar</a>
+            <a href="https://wa.me/34631333277" class="btn btn-whatsapp">WhatsApp</a>
+        </div>
+    </section>
+
+    <h2 class="section-title">Trabajos Finalizados</h2>
+    <div class="scroll-container">
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/puerta-basculante-negra.jpeg" alt="Puerta basculante negra">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/puerta-abatible.jpeg" alt="Puerta abatible motorizada">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/puerta-basculante-gris.jpeg" alt="Puerta basculante gris">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/puerta-peatonal.jpeg" alt="Puerta peatonal">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/reja-ventana.jpeg" alt="Reja para ventana">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="finalizados/puerta-basculante-chapa.jpeg" alt="Puerta industrial">
+        </div>
+    </div>
+
+    <h2 class="section-title">Nuestro Proceso</h2>
+    <div class="scroll-container">
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="en-proceso/puerta-basculante-postigo.jpeg" alt="Fabricación en taller">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="en-proceso/puerta-basculante-chapa.jpeg" alt="Estructura metálica">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="en-proceso/puerta-abatible.jpeg" alt="Montaje de marco">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="en-proceso/puerta-abatible-2.jpeg" alt="Soldadura">
+        </div>
+        <div class="gallery-item" onclick="openPopUp(this)">
+            <img src="en-proceso/puerta-peatonal-garage.jpeg" alt="Ajustes de precisión">
+        </div>
+    </div>
+
+    <div id="lightbox" onclick="closePopUp()">
+        <span class="close-btn">&times;</span>
+        <button class="nav-arrow prev-arrow" onclick="moveSlide(-1, event)">&#10094;</button>
+        <button class="nav-arrow next-arrow" onclick="moveSlide(1, event)">&#10095;</button>
+        <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+        <div id="lightbox-caption" onclick="event.stopPropagation()"></div>
+        <div id="lightbox-counter"></div>
+    </div>
+
+    <div class="modal-overlay" id="contactModal" onclick="if(event.target == this) toggleModal()">
+        <div class="modal-content">
+            <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:25px;" onclick="toggleModal()">&times;</span>
+            <h2>Solicitar Presupuesto</h2>
+            <form action="https://formspree.io/f/tallerspermont@gmail.com" method="POST">
+                <input type="text" name="nombre" placeholder="Tu nombre" required>
+                <input type="tel" name="telefono" placeholder="Tu teléfono" required>
+                <textarea name="mensaje" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
+                <button type="submit" class="btn btn-accent" style="width: 100%;">Enviar Solicitud</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-info">
+            <strong>LLINASENCA SL</strong><br>
+            📍 Can Clavell, Sant Joan de Sanata, 08450 Llinars del Vallès<br>
+            📞 <a href="tel:+34631333277" style="color:white; text-decoration:none;">631 333 277</a>
+        </div>
+        <p style="font-size: 0.8rem; opacity: 0.5;">&copy; 2026 Llinasenca SL. Fabricación propia en Barcelona.</p>
+    </footer>
+
+    <script>
+        let currentIdx = 0;
+        let imgList = [];
+        let startX = 0;
+
+        // Gestión de Galería
+        function refreshImages() {
+            imgList = Array.from(document.querySelectorAll('.gallery-item img'));
+        }
+        window.onload = refreshImages;
+
+        function openPopUp(el) {
+            refreshImages();
+            const img = el.querySelector('img');
+            currentIdx = imgList.indexOf(img);
+            showSlide();
+            document.getElementById('lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showSlide() {
+            const data = imgList[currentIdx];
+            const lbImg = document.getElementById('lightbox-img');
+            const lbCap = document.getElementById('lightbox-caption');
+            const lbCount = document.getElementById('lightbox-counter');
+            lbImg.style.opacity = "0";
+            setTimeout(() => {
+                lbImg.src = data.src;
+                lbCap.textContent = data.alt;
+                lbCount.textContent = `${currentIdx + 1} / ${imgList.length}`;
+                lbImg.onload = () => { lbImg.style.opacity = "1"; };
+            }, 50);
+        }
+
+        function moveSlide(step, e) {
+            if(e) e.stopPropagation();
+            currentIdx += step;
+            if (currentIdx >= imgList.length) currentIdx = 0;
+            if (currentIdx < 0) currentIdx = imgList.length - 1;
+            showSlide();
+        }
+
+        function closePopUp() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Gestión del Modal de Contacto
+        function toggleModal() {
+            const modal = document.getElementById('contactModal');
+            const isVisible = modal.style.display === 'flex';
+            modal.style.display = isVisible ? 'none' : 'flex';
+            document.body.style.overflow = isVisible ? 'auto' : 'hidden';
+        }
+
+        // SWIPE PARA MÓVIL
+        const lbEl = document.getElementById('lightbox');
+        lbEl.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; }, {passive: true});
+        lbEl.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].screenX;
+            if (startX - endX > 50) moveSlide(1);
+            if (startX - endX < -50) moveSlide(-1);
+        }, {passive: true});
+
+        // TECLADO
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('lightbox').style.display === 'flex') {
+                if (e.key === "ArrowLeft") moveSlide(-1);
+                if (e.key === "ArrowRight") moveSlide(1);
+                if (e.key === "Escape") closePopUp();
+            }
+            if (e.key === "Escape" && document.getElementById('contactModal').style.display === 'flex') {
+                toggleModal();
+            }
+        });
+    </script>
+</body>
+</html>
