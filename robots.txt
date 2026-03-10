@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://llinasencssl.github.io/llinasencs/sitemap.xml
